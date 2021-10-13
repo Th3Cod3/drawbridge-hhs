@@ -1,0 +1,28 @@
+#ifndef BUTTONS_LIB
+#define BUTTONS_LIB
+
+#define EMERGENCY_BUTTON    PA0
+#define STEP_BUTTON         PA1
+#define MODE_BUTTON         PA2
+#define BARRIER_BUTTON      PA3
+#define CLOSED_BUTTON       PA4
+#define OPEN_BUTTON         PA5
+#define RED_LEDS_BUTTON     PA6
+#define YELLOW_LEDS_BUTTON  PA7
+#define PENDING_BUTTON      PC0
+
+#define STATUS_EMERGENCY_BUTTON    (PINA & _BV(EMERGENCY_BUTTON))
+#define STATUS_STEP_BUTTON         (PINA & _BV(STEP_BUTTON))
+#define STATUS_MODE_BUTTON         (PINA & _BV(MODE_BUTTON))
+#define STATUS_BARRIER_BUTTON      (PINA & _BV(BARRIER_BUTTON))
+#define STATUS_CLOSED_BUTTON       (PINA & _BV(CLOSED_BUTTON))
+#define STATUS_OPEN_BUTTON         (PINA & _BV(OPEN_BUTTON))
+#define STATUS_RED_LEDS_BUTTON     (PINA & _BV(RED_LEDS_BUTTON))
+#define STATUS_YELLOW_LEDS_BUTTON  (PINA & _BV(YELLOW_LEDS_BUTTON))
+#define STATUS_PENDING_BUTTON      (PINC & _BV(PENDING_BUTTON))
+
+
+// configure button pins as input
+void initButtons(void);
+
+#endif // !BUTTONS_LIB

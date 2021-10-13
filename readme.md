@@ -1,0 +1,3 @@
+# TASKS
+
+[ ] bridge sensors (buttons)
