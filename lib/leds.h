@@ -5,28 +5,27 @@
 #define TOGGLE 2
 
 // BRIDGE TAFFIC LIGHT
-#define BRIDGE_GREEN_TOP_LED PL0    // GREEN    #00FF00
+#define BRIDGE_RED_BOTTOM_LED PL0   // RED      #FF0000
 #define BRIDGE_RED_TOP_LED PL1      // RED      #FF0000
-#define BRIDGE_GREEN_BOTTOM_LED PL2 // GREEN    #00FF00
-#define BRIDGE_RED_BOTTOM_LED PL3   // RED      #FF0000
+#define BRIDGE_GREEN_TOP_LED PL2    // GREEN    #00FF00
+#define BRIDGE_GREEN_BOTTOM_LED PL3 // GREEN    #00FF00
 #define BRIDGE_YELLOW_LED PL4       // YELLOW   #FFFF00
 #define TAFFIC_RED_LED PL5          // RED      #FF0000
 
 // PANEL
-#define PANEL_COUNTER_1_LED PB0     // YELLOW   #FFFF00
-#define PANEL_COUNTER_2_LED PB1     // YELLOW   #FFFF00
-#define PANEL_COUNTER_3_LED PB2     // YELLOW   #FFFF00
-#define PANEL_COUNTER_4_LED PB3     // YELLOW   #FFFF00
-#define EMERGENCY_LED PA0           // RED      #FF0000
-#define PANEL_BRIDGE_OPEN_LED PA1   // GREEN    #00FF00
-#define PANEL_BRIDGE_CLOSED_LED PA2 // RED      #FF0000
-#define PANEL_MODE_LED PA3           // YELLOW   #FFFF00
-#define PANEL_BARRIER_LED PA4         // RED      #FF0000
-#define PANEL_BRIDGE_RED_LED PA5       // RED      #FF0000
+#define PANEL_COUNTER_1_LED PB0     // GREEN    #00FF00
+#define PANEL_COUNTER_2_LED PB1     // GREEN    #00FF00
+#define PANEL_COUNTER_3_LED PB2     // GREEN    #00FF00
+#define PANEL_BARRIER_LED PB3       // RED      #FF0000
+#define PANEL_BRIDGE_CLOSED_LED PC0 // RED      #FF0000
+#define PANEL_MODE_LED PC1          // YELLOW   #FFFF00
+#define PANEL_BRIDGE_RED_LED PC2    // RED      #FF0000
+#define PANEL_BRIDGE_YELLOW_LED PC3 // YELLOW   #FFFF00
+#define EMERGENCY_LED PC4           // RED      #FF0000
+#define PANEL_BRIDGE_OPEN_LED PC5   // GREEN    #00FF00
 
 // PENDING
-#define PANEL_YELLOW_1_LED PA6 // YELLOW   #FFFF00 (dicht dubbelrood) voor testen
-#define PANEL_YELLOW_2_LED PA7  // YELLOW   #FFFF00 (open met dubbelrood) voor testen
+#define PANEL_YELLOW_2_LED PA7 // YELLOW   #FFFF00 (open met dubbelrood) voor testen
 #define PANEL_YELLOW_3_LED PE5 // YELLOW   #FFFF00 (gele lamp aan/uit)
 #define PANEL_YELLOW_4_LED PK1 // YELLOW   #FFFF00 (boot voor de brug)
 

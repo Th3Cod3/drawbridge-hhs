@@ -4,21 +4,19 @@
 // configure led pins as output
 void initLeds(void)
 {
-    // PORTA
-    DDRA |= _BV(EMERGENCY_LED);
-    DDRA |= _BV(PANEL_BRIDGE_OPEN_LED);
-    DDRA |= _BV(PANEL_BRIDGE_CLOSED_LED);
-    DDRA |= _BV(PANEL_MODE_LED);
-    DDRA |= _BV(PANEL_BARRIER_LED);
-    DDRA |= _BV(PANEL_BRIDGE_RED_LED);
-    DDRA |= _BV(PANEL_YELLOW_1_LED);
-    DDRA |= _BV(PANEL_YELLOW_2_LED);
+    // PORTC
+    DDRC |= _BV(EMERGENCY_LED);
+    DDRC |= _BV(PANEL_BRIDGE_OPEN_LED);
+    DDRC |= _BV(PANEL_BRIDGE_CLOSED_LED);
+    DDRC |= _BV(PANEL_MODE_LED);
+    DDRC |= _BV(PANEL_BRIDGE_RED_LED);
+    DDRC |= _BV(PANEL_BRIDGE_YELLOW_LED);
 
     // PORTB
     DDRB |= _BV(PANEL_COUNTER_1_LED);
     DDRB |= _BV(PANEL_COUNTER_2_LED);
     DDRB |= _BV(PANEL_COUNTER_3_LED);
-    DDRB |= _BV(PANEL_COUNTER_4_LED);
+    DDRB |= _BV(PANEL_BARRIER_LED);
 
     // PORTL
     DDRL |= _BV(BRIDGE_GREEN_TOP_LED);
@@ -39,15 +37,15 @@ void setEmergencyLed(int status)
 {
     if (status == ON)
     {
-        PORTA |= _BV(EMERGENCY_LED);
+        PORTC |= _BV(EMERGENCY_LED);
     }
     else if (status == TOGGLE)
     {
-        PORTA ^= _BV(EMERGENCY_LED);
+        PORTC ^= _BV(EMERGENCY_LED);
     }
     else if (status == OFF)
     {
-        PORTA &= ~_BV(EMERGENCY_LED);
+        PORTC &= ~_BV(EMERGENCY_LED);
     }
 }
 
@@ -87,15 +85,15 @@ void setPanelBridgeClosedLed(int status)
 {
     if (status == ON)
     {
-        PORTA |= _BV(PANEL_BRIDGE_CLOSED_LED);
+        PORTC |= _BV(PANEL_BRIDGE_CLOSED_LED);
     }
     else if (status == TOGGLE)
     {
-        PORTA ^= _BV(PANEL_BRIDGE_CLOSED_LED);
+        PORTC ^= _BV(PANEL_BRIDGE_CLOSED_LED);
     }
     else if (status == OFF)
     {
-        PORTA &= ~_BV(PANEL_BRIDGE_CLOSED_LED);
+        PORTC &= ~_BV(PANEL_BRIDGE_CLOSED_LED);
     }
 }
 
@@ -103,15 +101,15 @@ void setPanelBarrierLed(int status)
 {
     if (status == ON)
     {
-        PORTA |= _BV(PANEL_BARRIER_LED);
+        PORTB |= _BV(PANEL_BARRIER_LED);
     }
     else if (status == TOGGLE)
     {
-        PORTA ^= _BV(PANEL_BARRIER_LED);
+        PORTB ^= _BV(PANEL_BARRIER_LED);
     }
     else if (status == OFF)
     {
-        PORTA &= ~_BV(PANEL_BARRIER_LED);
+        PORTB &= ~_BV(PANEL_BARRIER_LED);
     }
 }
 
@@ -119,15 +117,15 @@ void setPanelBridgeRedLed(int status) // TODO: to be used
 {
     if (status == ON)
     {
-        PORTA |= _BV(PANEL_BRIDGE_RED_LED);
+        PORTC |= _BV(PANEL_BRIDGE_RED_LED);
     }
     else if (status == TOGGLE)
     {
-        PORTA ^= _BV(PANEL_BRIDGE_RED_LED);
+        PORTC ^= _BV(PANEL_BRIDGE_RED_LED);
     }
     else if (status == OFF)
     {
-        PORTA &= ~_BV(PANEL_BRIDGE_RED_LED);
+        PORTC &= ~_BV(PANEL_BRIDGE_RED_LED);
     }
 }
 
@@ -135,15 +133,15 @@ void setPanelYellow1Led(int status) // TODO: to be used
 {
     if (status == ON)
     {
-        PORTA |= _BV(PANEL_YELLOW_1_LED);
+        PORTC |= _BV(PANEL_BRIDGE_YELLOW_LED);
     }
     else if (status == TOGGLE)
     {
-        PORTA ^= _BV(PANEL_YELLOW_1_LED);
+        PORTC ^= _BV(PANEL_BRIDGE_YELLOW_LED);
     }
     else if (status == OFF)
     {
-        PORTA &= ~_BV(PANEL_YELLOW_1_LED);
+        PORTC &= ~_BV(PANEL_BRIDGE_YELLOW_LED);
     }
 }
 
@@ -151,15 +149,15 @@ void setPanelYellow2Led(int status) // TODO: to be used
 {
     if (status == ON)
     {
-        PORTA |= _BV(PANEL_YELLOW_2_LED);
+        PORTC |= _BV(PANEL_YELLOW_2_LED);
     }
     else if (status == TOGGLE)
     {
-        PORTA ^= _BV(PANEL_YELLOW_2_LED);
+        PORTC ^= _BV(PANEL_YELLOW_2_LED);
     }
     else if (status == OFF)
     {
-        PORTA &= ~_BV(PANEL_YELLOW_2_LED);
+        PORTC &= ~_BV(PANEL_YELLOW_2_LED);
     }
 }
 
@@ -182,7 +180,7 @@ void setPanelYellow3Led(int status)
 void setPanelCounterLed(int number)
 {
     PORTB = 0;
-    if (number <= 0x0F)
+    if (number <= 0b111)
     {
         PORTB |= number;
     }
@@ -192,15 +190,15 @@ void setPanelModeLed(int status) // TODO: to be used
 {
     if (status == ON)
     {
-        PORTA |= _BV(PANEL_MODE_LED);
+        PORTC |= _BV(PANEL_MODE_LED);
     }
     else if (status == TOGGLE)
     {
-        PORTA ^= _BV(PANEL_MODE_LED);
+        PORTC ^= _BV(PANEL_MODE_LED);
     }
     else if (status == OFF)
     {
-        PORTA &= ~_BV(PANEL_MODE_LED);
+        PORTC &= ~_BV(PANEL_MODE_LED);
     }
 }
 
@@ -272,14 +270,14 @@ void setPanelBridgeOpenLed(int status)
 {
     if (status == ON)
     {
-        PORTA |= _BV(PANEL_BRIDGE_OPEN_LED);
+        PORTC |= _BV(PANEL_BRIDGE_OPEN_LED);
     }
     else if (status == TOGGLE)
     {
-        PORTA ^= _BV(PANEL_BRIDGE_OPEN_LED);
+        PORTC ^= _BV(PANEL_BRIDGE_OPEN_LED);
     }
     else if (status == OFF)
     {
-        PORTA &= ~_BV(PANEL_BRIDGE_OPEN_LED);
+        PORTC &= ~_BV(PANEL_BRIDGE_OPEN_LED);
     }
 }

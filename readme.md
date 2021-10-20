@@ -1,3 +1,4 @@
 # TASKS
 
-[ ] bridge sensors (buttons)
+- [ ] bridge sensors (buttons)
+- [ ] windmeter

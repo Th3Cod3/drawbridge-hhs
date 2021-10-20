@@ -4,13 +4,14 @@
 // configure button pins as input
 void initButtons(void)
 {
-    DDRF &= ~_BV(EMERGENCY_BUTTON);
-    DDRF &= ~_BV(STEP_BUTTON);
-    DDRF &= ~_BV(MODE_BUTTON);
-    DDRF &= ~_BV(BARRIER_BUTTON);
-    DDRF &= ~_BV(CLOSED_BUTTON);
-    DDRF &= ~_BV(OPEN_BUTTON);
-    DDRF &= ~_BV(RED_LEDS_BUTTON);
-    DDRF &= ~_BV(YELLOW_LEDS_BUTTON);
-    DDRK &= ~_BV(PENDING_BUTTON); //NR8 (staat een boot voor de brug lampje aan op paneel)
+    DDRA &= ~_BV(EMERGENCY_BUTTON);
+    DDRA &= ~_BV(STEP_BUTTON);
+    DDRA &= ~_BV(MODE_BUTTON);
+    DDRA &= ~_BV(BARRIER_BUTTON);
+    DDRA &= ~_BV(CLOSED_BUTTON);
+    DDRA &= ~_BV(OPEN_BUTTON);
+    DDRA &= ~_BV(RED_LEDS_BUTTON);
+    DDRA &= ~_BV(YELLOW_LEDS_BUTTON);
+    PORTA = 0xFF;
+    DDRC &= ~_BV(MOTOR_OPEN_BUTTON);
 }

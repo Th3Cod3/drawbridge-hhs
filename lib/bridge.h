@@ -25,15 +25,14 @@
 #define BARRIER_TOGGLE 2
 
 // BRIDGE STATES
-#define EMERGENCY_STATE 0
-#define CHECK_FOR_BOAT_STATE 1
-#define TRAFFIC_NOTIFICATION_STATE 2
-#define STOP_TRAFFIC_STATE 3
-#define OPEN_BRUG_STATE 4
-#define BOAT_FREE_STATE 5
-#define BOAT_STOP_STATE 6
-#define CLOSE_BRUG_STATE 7
-#define FREE_TRAFFIC_STATE 8
+#define CHECK_FOR_BOAT_STATE 0
+#define TRAFFIC_NOTIFICATION_STATE 1
+#define STOP_TRAFFIC_STATE 2
+#define OPEN_BRUG_STATE 3
+#define BOAT_FREE_STATE 4
+#define BOAT_STOP_STATE 5
+#define CLOSE_BRUG_STATE 6
+#define FREE_TRAFFIC_STATE 7
 
 // BOAT TRAFFIC LIGHT ACTIONS
 #define BOAT_STOP 0
@@ -45,7 +44,7 @@ void initBridge();
 void allBridgeLights(int status);
 
 // @return nextStep
-int bridgeControl(int status);
+int bridgeControl(int status, int stepButton);
 
 void setTrafficLight(int status);
 

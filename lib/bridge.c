@@ -16,18 +16,13 @@ void allBridgeLights(int status)
     setBridgeRedTopLed(status);
 }
 
-int bridgeControl(int status)
+int bridgeControl(int status, int stepButton)
 {
     setPanelCounterLed(status);
     switch (status)
     {
-    case EMERGENCY_STATE:
-        setBridgeLight(BOAT_STOP);
-        setTrafficLight(OFF);
-        setEmergencyLed(ON);
-        return EMERGENCY_STATE;
     case CHECK_FOR_BOAT_STATE:
-        setTrafficLight(TRAFFIC_NOTIFICATION);
+        setTrafficLight(TRAFFIC_FREE);
         setBridgeLight(BOAT_STOP);
         // TODO: check for boat
         return 1 ? TRAFFIC_NOTIFICATION_STATE : CHECK_FOR_BOAT_STATE;

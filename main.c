@@ -14,12 +14,10 @@ int main(void)
     initButtons();
     initLeds();
     initBridge();
-
-    char step = 1;
-    char mode = AUTOMATIC_MODE;
     barrierInstruction(BARRIER_OPEN);
+    char step = 0;
+    char mode = MANUAL_MODE;
     char barrierStatus = BARRIER_OPEN;
-    char bridge = 0;
     while (1)
     {
         char emergencyButton = STATUS_EMERGENCY_BUTTON;
@@ -30,57 +28,69 @@ int main(void)
         char openButton = STATUS_OPEN_BUTTON;
         char redLedsButton = STATUS_RED_LEDS_BUTTON;
         char yellowLedsButton = STATUS_YELLOW_LEDS_BUTTON;
-        // int button8 = STATUS_PENDING_BUTTON;
-
+        // int button8 = STATUS_MOTOR_OPEN_BUTTON;
         _delay_ms(10);
 
         if (emergencyButton)
         {
+            setEmergencyLed(ON);
+            bridgeInstruction(BRIDGE_STOP);
+            setTrafficLight(TRAFFIC_STOP);
+            setBridgeLight(BOAT_STOP);
             mode = EMERGENCY_MODE;
         }
         else if (modeButton)
         {
-            mode == AUTOMATIC_MODE
-                ? MANUAL_MODE
-                : AUTOMATIC_MODE;
+            setEmergencyLed(OFF);
+            if (mode == AUTOMATIC_MODE)
+            {
+                setPanelModeLed(ON);
+                setPanelCounterLed(OFF);
+                mode = MANUAL_MODE;
+            }
+            else
+            {
+                setPanelModeLed(OFF);
+                mode = AUTOMATIC_MODE;
+            }
         }
 
         if (mode == AUTOMATIC_MODE)
         {
-            step = bridgeControl(step);
+            step = bridgeControl(step, stepButton);
         }
         else if (mode == MANUAL_MODE)
-        { //Knop2 ingedrukt = negeer cases
-            if (stepButton)
-            {
-                step++;
-            }
+        {
 
             if (barrierButton)
-            { //Knop3 ingedrukt = Slagbomen open/dicht
+            {
                 barrierInstruction(BARRIER_TOGGLE);
             }
 
             if (closedButton)
-            { //Knop4 ingedrukt = dicht met dubbelrood
+            {
+                bridgeInstruction(BRIDGE_CLOSE);
             }
 
             if (openButton)
-            { //Knop5 ingedrukt = open met dubbelrood
+            {
+                bridgeInstruction(BRIDGE_OPEN);
+                setBridgeLight(BOAT_STOP);
             }
 
             if (redLedsButton)
-            { //Knop6 ingedrukt = lampenrood
+            {
                 setBridgeRedBottomLed(TOGGLE);
                 setBridgeRedTopLed(TOGGLE);
+                setTrafficRedLed(TOGGLE);
             }
 
             if (yellowLedsButton)
-            { //Knop7 ingedrukt = gelelamp aan
-                setPanelYellow3Led(TOGGLE);
+            {
+                setBridgeYellowLed(TOGGLE);
             }
         }
-        _delay_ms(1000);
+        _delay_ms(500); // only for debuggen
     }
 
     // BELANGRIJK KNOP 0,2,6 EN 7 MOETEN SCHAKELAARS ZIJN!!!
