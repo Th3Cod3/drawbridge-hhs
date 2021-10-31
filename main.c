@@ -17,19 +17,47 @@ int main(void)
     setBridgeLight(BOAT_STOP);
     setTrafficLight(TRAFFIC_STOP);
     barrierInstruction(BARRIER_OPEN);
+    /** readEmergencyButton doesn't work properly */
+    char lastStateEmergencyButton;
+    char lastStateModeButton;
+    char lastStateBarrierButton;
+    char lastStateRedLedsButton;
+    char lastStateYellowLedsButton;
+    int timer;
+
     char step = 0;
     char mode = MANUAL_MODE;
     char motorStatus = BRIDGE_STOP;
     while (1)
     {
-        char emergencyButton = readEmergencyButton();
-        char stepButton = readStepButton();
-        char modeButton = readModeButton();
-        char barrierButton = readBarrierButton();
-        char closedButton = readClosedButton();
-        char openButton = readOpenButton();
-        char redLedsButton = readRedLedsButton();
-        char yellowLedsButton = readYellowLedsButton();
+        char stateEmergencyButton = STATUS_EMERGENCY_BUTTON;
+        char emergencyButton = stateEmergencyButton && lastStateEmergencyButton != stateEmergencyButton ? 1 : 0;
+        lastStateEmergencyButton = stateEmergencyButton;
+
+        char stateModeButton = STATUS_MODE_BUTTON;
+        char modeButton = stateModeButton && lastStateModeButton != stateModeButton ? 1 : 0;
+        lastStateModeButton = stateModeButton;
+
+        char stateBarrierButton = STATUS_BARRIER_BUTTON;
+        char barrierButton = stateBarrierButton && lastStateBarrierButton != stateBarrierButton ? 1 : 0;
+        lastStateBarrierButton = stateBarrierButton;
+
+        char stateRedLedsButton = STATUS_RED_LEDS_BUTTON;
+        char redLedsButton = stateRedLedsButton && lastStateRedLedsButton != stateRedLedsButton ? 1 : 0;
+        lastStateRedLedsButton = stateRedLedsButton;
+
+        char stateYellowLedsButton = STATUS_YELLOW_LEDS_BUTTON;
+        char yellowLedsButton = stateYellowLedsButton && lastStateYellowLedsButton != stateYellowLedsButton ? 1 : 0;
+        lastStateYellowLedsButton = stateYellowLedsButton;
+
+        // char emergencyButton = readEmergencyButton();
+        // char modeButton = readModeButton();
+        // char barrierButton = readBarrierButton();
+        // char redLedsButton = readRedLedsButton();
+        // char yellowLedsButton = readYellowLedsButton();
+        char closedButton = STATUS_CLOSED_BUTTON;
+        char openButton = STATUS_OPEN_BUTTON;
+        char stepButton = STATUS_MODE_BUTTON;
         char motorOpenButton = STATUS_MOTOR_OPEN_BUTTON;
         char motorCloseButton = STATUS_MOTOR_CLOSE_BUTTON;
         _delay_ms(10);
