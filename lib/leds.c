@@ -204,6 +204,7 @@ void setPanelModeLed(int status) // TODO: to be used
 
 void setBridgeYellowLed(int status)
 {
+    setPanelYellow1Led(status);
     if (status == ON)
     {
         PORTL |= _BV(BRIDGE_YELLOW_LED);

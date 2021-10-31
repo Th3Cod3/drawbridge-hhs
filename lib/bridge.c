@@ -1,9 +1,11 @@
 #include <avr/io.h>
 #include "leds.h"
+#include "buttons.h"
 #include "bridge.h"
 #include "servo.h"
 
-void initBridge(){
+void initBridge()
+{
     init_servo();
     DDRH |= _BV(MOTOR_IN1) | _BV(MOTOR_IN2);
 }
@@ -18,6 +20,8 @@ void allBridgeLights(int status)
 
 int bridgeControl(int status, int stepButton)
 {
+    static int timer = 0; // 10 is ~10ms (delay in)
+    timer++;
     setPanelCounterLed(status);
     switch (status)
     {
@@ -25,39 +29,92 @@ int bridgeControl(int status, int stepButton)
         setTrafficLight(TRAFFIC_FREE);
         setBridgeLight(BOAT_STOP);
         // TODO: check for boat
-        return 1 ? TRAFFIC_NOTIFICATION_STATE : CHECK_FOR_BOAT_STATE;
+        return STATUS_STEP_BUTTON ? TRAFFIC_NOTIFICATION_STATE : CHECK_FOR_BOAT_STATE;
     case TRAFFIC_NOTIFICATION_STATE:
         setTrafficLight(TRAFFIC_NOTIFICATION);
         setBridgeLight(BOAT_STOP);
         // TODO: lock for a period with millis() of interrups
-        return 1 ? STOP_TRAFFIC_STATE : TRAFFIC_NOTIFICATION_STATE;
+        if (timer < TIMER_TRAFFIC_NOTIFICATION / 10)
+        {
+            return STOP_TRAFFIC_STATE;
+        }
+        else
+        {
+            timer = 0;
+            return TRAFFIC_NOTIFICATION_STATE;
+        }
     case STOP_TRAFFIC_STATE:
         setTrafficLight(TRAFFIC_STOP);
         barrierInstruction(BARRIER_CLOSED);
         // TODO: lock for a period with millis() of interrups
-        return 1 ? OPEN_BRUG_STATE : STOP_TRAFFIC_STATE;
+        if (timer < DELAY_AFTER_BARRIER / 10)
+        {
+            return OPEN_BRUG_STATE;
+        }
+        else
+        {
+            timer = 0;
+            return STOP_TRAFFIC_STATE;
+        }
     case OPEN_BRUG_STATE:
-        bridgeInstruction(BRIDGE_OPEN);
-        // TODO: button press
-        return 1 ? BOAT_FREE_STATE : OPEN_BRUG_STATE;
+        if (STATUS_MOTOR_OPEN_BUTTON)
+        {
+            bridgeInstruction(BRIDGE_STOP);
+            return BOAT_FREE_STATE;
+        }
+        else
+        {
+            bridgeInstruction(BRIDGE_OPEN);
+            return OPEN_BRUG_STATE;
+        }
     case BOAT_FREE_STATE:
         bridgeInstruction(BRIDGE_STOP);
         setBridgeLight(BOAT_FREE);
         // TODO: timer || no boots
-        return 1 ? BOAT_STOP_STATE : BOAT_FREE_STATE;
+        if (timer < DELAY_TO_KEEP_BRIDGE_OPEN / 10)
+        {
+            return BOAT_STOP_STATE;
+        }
+        else
+        {
+            timer = 0;
+            return BOAT_FREE_STATE;
+        }
     case BOAT_STOP_STATE:
         setBridgeLight(BOAT_STOP);
-        // TODO: timer
-        return 1 ? CLOSE_BRUG_STATE : BOAT_STOP_STATE;
+        if (timer < TIMER_TO_START_CLOSED_BRIDGE / 10)
+        {
+            return CLOSE_BRUG_STATE;
+        }
+        else
+        {
+            timer = 0;
+            return BOAT_STOP_STATE;
+        }
     case CLOSE_BRUG_STATE:
         bridgeInstruction(BRIDGE_CLOSE);
-        // TODO: button press
-        return 1 ? FREE_TRAFFIC_STATE : CLOSE_BRUG_STATE;
+        if (STATUS_MOTOR_CLOSE_BUTTON)
+        {
+            bridgeInstruction(BRIDGE_STOP);
+            return FREE_TRAFFIC_STATE;
+        }
+        else
+        {
+            bridgeInstruction(BRIDGE_CLOSE);
+            return CLOSE_BRUG_STATE;
+        }
     case FREE_TRAFFIC_STATE:
         bridgeInstruction(BRIDGE_STOP);
         barrierInstruction(BARRIER_OPEN);
-        // TODO: button press
-        return 1 ? CHECK_FOR_BOAT_STATE : FREE_TRAFFIC_STATE;
+        if (timer < DELAY_AFTER_BARRIER / 10)
+        {
+            return CHECK_FOR_BOAT_STATE;
+        }
+        else
+        {
+            timer = 0;
+            return FREE_TRAFFIC_STATE;
+        }
     }
 
     return 0;
@@ -76,8 +133,8 @@ void setTrafficLight(int status)
         break;
 
     case TRAFFIC_NOTIFICATION:
-        // blink met millis();
-        setTrafficRedLed(ON);
+        // TODO: blink met millis();
+        setTrafficLight(TRAFFIC_STOP);
         break;
     }
 }
@@ -92,6 +149,7 @@ void setBridgeLight(int status)
         setBridgeYellowLed(ON);
         setBridgeRedBottomLed(ON);
         setBridgeRedTopLed(ON);
+        setPanelBridgeRedLed(ON);
         break;
 
     case BOAT_FREE:
@@ -100,14 +158,7 @@ void setBridgeLight(int status)
         setBridgeYellowLed(OFF);
         setBridgeRedBottomLed(OFF);
         setBridgeRedTopLed(OFF);
-        break;
-
-    case BOAT_OPENING:
-        setBridgeGreenTopLed(ON);
-        setBridgeGreenBottomLed(ON);
-        setBridgeYellowLed(OFF);
-        setBridgeRedBottomLed(OFF);
-        setBridgeRedTopLed(OFF);
+        setPanelBridgeRedLed(OFF);
         break;
     }
 }
@@ -117,44 +168,53 @@ void bridgeInstruction(int status)
     switch (status)
     {
     case BRIDGE_CLOSE:
+        if (STATUS_MOTOR_CLOSE_BUTTON)
+            return bridgeInstruction(BRIDGE_STOP);
         PORTH |= _BV(MOTOR_IN1);
         PORTH &= ~_BV(MOTOR_IN2);
-        break;
+        return;
 
     case BRIDGE_OPEN:
+        if (STATUS_MOTOR_OPEN_BUTTON)
+            return bridgeInstruction(BRIDGE_STOP);
         PORTH &= ~_BV(MOTOR_IN1);
         PORTH |= _BV(MOTOR_IN2);
-        break;
+        return;
+
+    case BRIDGE_CHECK:
+        PORTH &= ~_BV(MOTOR_IN1);
+        PORTH &= ~_BV(MOTOR_IN2);
+        return;
 
     case BRIDGE_STOP:
         PORTH &= ~_BV(MOTOR_IN1);
         PORTH &= ~_BV(MOTOR_IN2);
-        break;
+        return;
     }
 }
 
 void barrierInstruction(int status)
 {
-    static lastStatus;
+    static char lastStatus;
     switch (status)
     {
     case BARRIER_CLOSED:
+        setPanelBarrierLed(ON);
         lastStatus = BARRIER_CLOSED;
         servo1_set_percentage(-100);
         servo2_set_percentage(-100);
-        break;
+        return;
 
     case BARRIER_OPEN:
+        setPanelBarrierLed(OFF);
         lastStatus = BARRIER_OPEN;
         servo1_set_percentage(100);
         servo2_set_percentage(100);
-        break;
+        return;
 
     case BARRIER_TOGGLE:
         lastStatus = !lastStatus;
-        int value = lastStatus ? 100 : -100;
-        servo1_set_percentage(value);
-        servo2_set_percentage(value);
-        break;
+        lastStatus ? barrierInstruction(BARRIER_OPEN) : barrierInstruction(BARRIER_CLOSED);
+        return;
     }
 }

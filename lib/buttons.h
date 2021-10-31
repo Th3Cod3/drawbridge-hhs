@@ -9,8 +9,8 @@
 #define OPEN_BUTTON PA5
 #define MODE_BUTTON PA6
 #define EMERGENCY_BUTTON PA7
-#define MOTOR_OPEN_BUTTON PC6
-#define MOTOR_CLOSE_BUTTON PC7
+#define MOTOR_OPEN_BUTTON PC7
+#define MOTOR_CLOSE_BUTTON PC6
 
 #define STATUS_EMERGENCY_BUTTON !(PINA & _BV(EMERGENCY_BUTTON))
 #define STATUS_STEP_BUTTON !(PINA & _BV(STEP_BUTTON))
@@ -25,5 +25,14 @@
 
 // configure button pins as input
 void initButtons(void);
+
+char readEmergencyButton();
+char readStepButton();
+char readModeButton();
+char readBarrierButton();
+char readClosedButton();
+char readOpenButton();
+char readRedLedsButton();
+char readYellowLedsButton();
 
 #endif // !BUTTONS_LIB

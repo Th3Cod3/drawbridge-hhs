@@ -14,24 +14,27 @@ int main(void)
     initButtons();
     initLeds();
     initBridge();
+    setBridgeLight(BOAT_STOP);
+    setTrafficLight(TRAFFIC_STOP);
     barrierInstruction(BARRIER_OPEN);
     char step = 0;
     char mode = MANUAL_MODE;
-    char barrierStatus = BARRIER_OPEN;
+    char motorStatus = BRIDGE_STOP;
     while (1)
     {
-        char emergencyButton = STATUS_EMERGENCY_BUTTON;
-        char stepButton = STATUS_STEP_BUTTON;
-        char modeButton = STATUS_MODE_BUTTON;
-        char barrierButton = STATUS_BARRIER_BUTTON;
-        char closedButton = STATUS_CLOSED_BUTTON;
-        char openButton = STATUS_OPEN_BUTTON;
-        char redLedsButton = STATUS_RED_LEDS_BUTTON;
-        char yellowLedsButton = STATUS_YELLOW_LEDS_BUTTON;
-        // int button8 = STATUS_MOTOR_OPEN_BUTTON;
+        char emergencyButton = readEmergencyButton();
+        char stepButton = readStepButton();
+        char modeButton = readModeButton();
+        char barrierButton = readBarrierButton();
+        char closedButton = readClosedButton();
+        char openButton = readOpenButton();
+        char redLedsButton = readRedLedsButton();
+        char yellowLedsButton = readYellowLedsButton();
+        char motorOpenButton = STATUS_MOTOR_OPEN_BUTTON;
+        char motorCloseButton = STATUS_MOTOR_CLOSE_BUTTON;
         _delay_ms(10);
 
-        if (emergencyButton)
+        if (emergencyButton && mode != EMERGENCY_MODE)
         {
             setEmergencyLed(ON);
             bridgeInstruction(BRIDGE_STOP);
@@ -39,47 +42,70 @@ int main(void)
             setBridgeLight(BOAT_STOP);
             mode = EMERGENCY_MODE;
         }
-        else if (modeButton)
+        else if (emergencyButton && mode == EMERGENCY_MODE)
         {
             setEmergencyLed(OFF);
+            mode = MANUAL_MODE;
+        }
+        else if (modeButton && mode != EMERGENCY_MODE)
+        {
+            setEmergencyLed(OFF);
+            bridgeInstruction(BRIDGE_STOP);
+            setTrafficLight(TRAFFIC_STOP);
+            setBridgeLight(BOAT_STOP);
             if (mode == AUTOMATIC_MODE)
             {
-                setPanelModeLed(ON);
                 setPanelCounterLed(OFF);
                 mode = MANUAL_MODE;
             }
             else
             {
-                setPanelModeLed(OFF);
                 mode = AUTOMATIC_MODE;
             }
         }
 
         if (mode == AUTOMATIC_MODE)
         {
+            setPanelModeLed(OFF);
             step = bridgeControl(step, stepButton);
         }
         else if (mode == MANUAL_MODE)
         {
-
+            setPanelModeLed(ON);
             if (barrierButton)
             {
                 barrierInstruction(BARRIER_TOGGLE);
             }
 
-            if (closedButton)
+            if (motorStatus == BRIDGE_OPEN && motorOpenButton)
             {
-                bridgeInstruction(BRIDGE_CLOSE);
+                bridgeInstruction(BRIDGE_STOP);
+                setPanelBridgeOpenLed(ON);
+                motorStatus = BRIDGE_STOP;
             }
-
-            if (openButton)
+            else if (motorStatus == BRIDGE_CLOSE && motorCloseButton)
             {
+                setPanelBridgeClosedLed(ON);
+                bridgeInstruction(BRIDGE_STOP);
+                motorStatus = BRIDGE_STOP;
+            }
+            else if (closedButton && !motorCloseButton)
+            {
+                setPanelBridgeOpenLed(OFF);
+                bridgeInstruction(BRIDGE_CLOSE);
+                motorStatus = BRIDGE_CLOSE;
+            }
+            else if (openButton && !motorOpenButton)
+            {
+                setPanelBridgeClosedLed(OFF);
                 bridgeInstruction(BRIDGE_OPEN);
                 setBridgeLight(BOAT_STOP);
+                motorStatus = BRIDGE_OPEN;
             }
 
             if (redLedsButton)
             {
+                setPanelBridgeRedLed(TOGGLE);
                 setBridgeRedBottomLed(TOGGLE);
                 setBridgeRedTopLed(TOGGLE);
                 setTrafficRedLed(TOGGLE);
@@ -90,9 +116,7 @@ int main(void)
                 setBridgeYellowLed(TOGGLE);
             }
         }
-        _delay_ms(500); // only for debuggen
     }
 
-    // BELANGRIJK KNOP 0,2,6 EN 7 MOETEN SCHAKELAARS ZIJN!!!
     return 0;
 }
