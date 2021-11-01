@@ -163,7 +163,7 @@ void setBridgeLight(int status)
     case BOAT_SMALL_FREE:
         setBridgeGreenTopLed(OFF);
         setBridgeGreenBottomLed(OFF);
-        setBridgeYellowLed(OFF);
+        setBridgeYellowLed(ON);
         setBridgeRedBottomLed(ON);
         setBridgeRedTopLed(ON);
         setPanelBridgeRedLed(ON);
