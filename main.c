@@ -95,7 +95,9 @@ int main(void)
         if (mode == AUTOMATIC_MODE)
         {
             setPanelModeLed(OFF);
-            step = bridgeControl(step, stepButton);
+            int newStep = bridgeControl(step, timer);
+            timer = newStep == step ? timer + 1 : 0;
+            step = newStep;
         }
         else if (mode == MANUAL_MODE)
         {

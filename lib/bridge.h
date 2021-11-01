@@ -5,9 +5,9 @@
 #define MOTOR_IN2 PH5
 
 // SETTINGS
-#define TIMER_TRAFFIC_NOTIFICATION 2000   // ms
-#define DELAY_AFTER_BARRIER 2000          // ms
-#define DELAY_TO_KEEP_BRIDGE_OPEN 4000    // ms
+#define TIMER_TRAFFIC_NOTIFICATION 1000   // ms
+#define DELAY_AFTER_BARRIER 1000          // ms
+#define DELAY_TO_KEEP_BRIDGE_OPEN 5000    // ms
 #define TIMER_TO_START_CLOSED_BRIDGE 1000 // ms
 
 // BRIDGE MODES
@@ -44,6 +44,7 @@
 // BOAT TRAFFIC LIGHT ACTIONS
 #define BOAT_STOP 0
 #define BOAT_FREE 1
+#define BOAT_SMALL_FREE 2
 
 void initBridge();
 

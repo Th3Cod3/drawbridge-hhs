@@ -18,23 +18,21 @@ void allBridgeLights(int status)
     setBridgeRedTopLed(status);
 }
 
-int bridgeControl(int status, int stepButton)
+int bridgeControl(int status, int timer)
 {
-    static int timer = 0; // 10 is ~10ms (delay in)
-    timer++;
     setPanelCounterLed(status);
     switch (status)
     {
     case CHECK_FOR_BOAT_STATE:
         setTrafficLight(TRAFFIC_FREE);
-        setBridgeLight(BOAT_STOP);
+        setBridgeLight(BOAT_SMALL_FREE);
         // TODO: check for boat
         return STATUS_STEP_BUTTON ? TRAFFIC_NOTIFICATION_STATE : CHECK_FOR_BOAT_STATE;
     case TRAFFIC_NOTIFICATION_STATE:
         setTrafficLight(TRAFFIC_NOTIFICATION);
         setBridgeLight(BOAT_STOP);
         // TODO: lock for a period with millis() of interrups
-        if (timer < TIMER_TRAFFIC_NOTIFICATION / 10)
+        if (timer > TIMER_TRAFFIC_NOTIFICATION / 10)
         {
             return STOP_TRAFFIC_STATE;
         }
@@ -47,7 +45,7 @@ int bridgeControl(int status, int stepButton)
         setTrafficLight(TRAFFIC_STOP);
         barrierInstruction(BARRIER_CLOSED);
         // TODO: lock for a period with millis() of interrups
-        if (timer < DELAY_AFTER_BARRIER / 10)
+        if (timer > DELAY_AFTER_BARRIER / 10)
         {
             return OPEN_BRUG_STATE;
         }
@@ -71,7 +69,7 @@ int bridgeControl(int status, int stepButton)
         bridgeInstruction(BRIDGE_STOP);
         setBridgeLight(BOAT_FREE);
         // TODO: timer || no boots
-        if (timer < DELAY_TO_KEEP_BRIDGE_OPEN / 10)
+        if (timer > DELAY_TO_KEEP_BRIDGE_OPEN / 10)
         {
             return BOAT_STOP_STATE;
         }
@@ -82,7 +80,7 @@ int bridgeControl(int status, int stepButton)
         }
     case BOAT_STOP_STATE:
         setBridgeLight(BOAT_STOP);
-        if (timer < TIMER_TO_START_CLOSED_BRIDGE / 10)
+        if (timer > TIMER_TO_START_CLOSED_BRIDGE / 10)
         {
             return CLOSE_BRUG_STATE;
         }
@@ -104,9 +102,10 @@ int bridgeControl(int status, int stepButton)
             return CLOSE_BRUG_STATE;
         }
     case FREE_TRAFFIC_STATE:
+        setBridgeLight(BOAT_SMALL_FREE);
         bridgeInstruction(BRIDGE_STOP);
         barrierInstruction(BARRIER_OPEN);
-        if (timer < DELAY_AFTER_BARRIER / 10)
+        if (timer > DELAY_AFTER_BARRIER / 10)
         {
             return CHECK_FOR_BOAT_STATE;
         }
@@ -146,7 +145,7 @@ void setBridgeLight(int status)
     case BOAT_STOP:
         setBridgeGreenTopLed(OFF);
         setBridgeGreenBottomLed(OFF);
-        setBridgeYellowLed(ON);
+        setBridgeYellowLed(OFF);
         setBridgeRedBottomLed(ON);
         setBridgeRedTopLed(ON);
         setPanelBridgeRedLed(ON);
@@ -159,6 +158,15 @@ void setBridgeLight(int status)
         setBridgeRedBottomLed(OFF);
         setBridgeRedTopLed(OFF);
         setPanelBridgeRedLed(OFF);
+        break;
+
+    case BOAT_SMALL_FREE:
+        setBridgeGreenTopLed(OFF);
+        setBridgeGreenBottomLed(OFF);
+        setBridgeYellowLed(OFF);
+        setBridgeRedBottomLed(ON);
+        setBridgeRedTopLed(ON);
+        setPanelBridgeRedLed(ON);
         break;
     }
 }
